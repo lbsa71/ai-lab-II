@@ -1,0 +1,187 @@
+# Cursor Rules for AI Lab II
+
+## Required Reading
+
+Before making any changes, review:
+- `ARCHITECTURE.md` - System design and structure
+- `IMPLEMENTATION_STRATEGY.md` - Build approach and dependencies
+- `IMPLEMENTATION_PROGRESS.md` - Current status and tasks
+- `README.md` - Project overview and setup
+
+## Project Standards
+
+### TypeScript
+- Use strict mode (`strict: true` in tsconfig.json)
+- Explicitly type function parameters and return values
+- Use interfaces for object shapes, types for unions/primitives
+- Avoid `any` - use `unknown` if type is truly unknown
+- Enable `noImplicitAny`, `strictNullChecks`
+
+### React Best Practices
+- Functional components only (no class components)
+- Use TypeScript with React.FC or explicit typing
+- Props interfaces defined above component
+- One component per file, match filename to component name
+- Custom hooks start with `use` prefix
+
+### Component Structure
+```typescript
+// Imports
+import React from 'react';
+import type { FC } from 'react';
+
+// Types/Interfaces
+interface ComponentProps {
+  prop: string;
+}
+
+// Component
+export const Component: FC<ComponentProps> = ({ prop }) => {
+  // Hooks
+  // Event handlers
+  // Render
+  return <div>{prop}</div>;
+};
+```
+
+### Naming Conventions
+- Components: PascalCase (e.g., `ChatInterface.tsx`)
+- Files: PascalCase for components, camelCase for utilities
+- Variables/functions: camelCase
+- Constants: UPPER_SNAKE_CASE
+- Interfaces: PascalCase with `I` prefix optional
+- Types: PascalCase
+
+### File Organization
+```
+src/
+├── components/     # Reusable UI components
+├── services/       # API clients, external services
+├── types/          # Shared TypeScript types
+├── utils/          # Helper functions
+├── hooks/          # Custom React hooks
+└── styles/         # Global styles, CSS modules
+```
+
+### State Management
+- Use `useState` for simple local state
+- Use `useReducer` for complex state logic
+- Keep state close to where it's used
+- Lift state only when necessary
+- No global state library unless justified
+
+### API Integration
+- All OpenAI calls through backend only
+- Never expose API keys in frontend
+- Use environment variables for configuration
+- Handle loading, error, success states
+- Validate responses before using
+
+### Error Handling
+- Try-catch for async operations
+- Display user-friendly error messages
+- Log errors for debugging
+- Validate input before processing
+- Handle network failures gracefully
+
+### Security Practices
+- API keys server-side only (never in frontend)
+- Validate all user input
+- Sanitize data before display
+- Use HTTPS in production
+- Configure CORS properly
+- No sensitive data in logs or client-side code
+
+### Code Style
+- Use 2 spaces for indentation
+- Single quotes for strings (except JSX uses double)
+- Semicolons required
+- Trailing commas in multi-line objects/arrays
+- Max line length: 100 characters
+- Use arrow functions for callbacks
+
+### Testing Approach (TDD)
+1. Write test defining expected behavior
+2. Run test (should fail)
+3. Implement minimum code to pass
+4. Refactor while keeping tests green
+5. Repeat
+
+### Testing Standards
+- Backend: Jest + Supertest
+- Frontend: Vitest + React Testing Library
+- Test files: `*.test.ts` or `*.test.tsx`
+- Mock external dependencies (OpenAI, APIs)
+- Test user interactions, not implementation details
+- Aim for >80% coverage on critical paths
+
+### Git Commit Messages
+- Use conventional commits format
+- Format: `type(scope): description`
+- Types: feat, fix, docs, style, refactor, test, chore
+- Keep first line under 72 characters
+- Examples:
+  - `feat(chat): add message input component`
+  - `fix(api): handle empty conversation history`
+  - `docs(readme): update setup instructions`
+
+### Code Review Checklist
+- [ ] TypeScript types are explicit and correct
+- [ ] No API keys or secrets in code
+- [ ] Error handling implemented
+- [ ] Tests added/updated
+- [ ] Documentation updated if needed
+- [ ] Code follows project conventions
+- [ ] No console.logs in production code
+
+### Common Patterns
+
+#### API Call Pattern
+```typescript
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
+
+const handleSubmit = async () => {
+  setLoading(true);
+  setError(null);
+  try {
+    const result = await apiService.call();
+    // handle success
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'Unknown error');
+  } finally {
+    setLoading(false);
+  }
+};
+```
+
+#### Props Destructuring
+```typescript
+// Prefer destructuring in function signature
+export const Component: FC<Props> = ({ name, onClick }) => {
+  // Use destructured props
+};
+```
+
+### Performance
+- Memoize expensive calculations with `useMemo`
+- Memoize callbacks with `useCallback`
+- Use `React.memo` for expensive pure components
+- Avoid inline object/array literals in props
+- Lazy load routes and heavy components
+
+### Accessibility
+- Use semantic HTML elements
+- Add ARIA labels where needed
+- Ensure keyboard navigation works
+- Test with screen readers
+- Sufficient color contrast
+
+## Don't
+- Don't commit `.env` files
+- Don't use `var` (use `const` or `let`)
+- Don't mutate state directly
+- Don't use deprecated React features
+- Don't bypass TypeScript with `as any`
+- Don't make breaking changes without discussion
+- Don't add dependencies without justification
