@@ -11,7 +11,7 @@ export const initializeOpenAI = (): void => {
   }
 
   openai = new OpenAI({
-    apiKey: apiKey,
+    apiKey,
   });
 };
 
